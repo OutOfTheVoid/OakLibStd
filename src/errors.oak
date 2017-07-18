@@ -1,0 +1,6 @@
+namespace std
+{
+	
+	const ERROR_OPTION_UNWRAP_NONE:u32 = 1;
+	
+}

@@ -1,0 +1,119 @@
+namespace std
+{
+	
+	struct vector <T>
+	{
+		
+		data: array:<T>,
+		length: uptr,
+		
+	}
+
+	implement vector:<T> where <T>
+	{
+		
+		function new ( size: uptr ): vector:<T>
+		{
+			
+			return vector:<T>: { data: array:<T> :: new ( size ), length: 0 };
+			
+		}
+		
+		function get_length ( & self ): uptr
+		{
+			
+			return self.length;
+			
+		}
+		
+	}
+
+	implement vector:<T> where <T: Copy>
+	{
+		
+		function new_from_array ( source: & array:<T> ): vector:<T>
+		{
+			
+			bind length:uptr = source.get_length ();
+			
+			bind ret:vector:<T> = vector:<T>: { data: array:<T> :: new ( length ), length: length };
+			
+			bind i = 0;
+			
+			while ( i < length )
+			{
+				
+				ret.data [ i ] = source [ i ];
+				
+				i ++;
+				
+			}
+			
+			return ret;
+			
+		}
+		
+		function new_including_array ( size: uptr, source: & array:<T> ): vector:<T>
+		{
+			
+			bind src_length: uptr = source.get_length ();
+			bind total_length: uptr = src_length + size;
+			
+			bind ret:vector:<T> = vector:<T>: { data: array:<T> :: new ( total_length ), length: src_length };
+			
+			bind i = 0;
+			
+			while ( i < src_length )
+			{
+				
+				ret.data [ i ] = source [ i ];
+				
+				i ++;
+				
+			}
+			
+			return ret;
+			
+		}
+		
+	}
+
+	implement vector:<ELEMENT_T> for IndexOp:<ELEMENT_T, uptr> where <ELEMENT_T>
+	{
+		
+		function op_index ( base: & Self, index: uptr ): & ELEMENT_T
+		{
+			
+			return Self.data [ index ];
+			
+		}
+		
+	}
+
+	implement vector:<ELEMENT_T> for List:<ELEMENT_T> where <ELEMENT_T>
+	{
+		
+		function get_length ( & self ): uptr
+		{
+			
+			return self.data.get_length ();
+			
+		}
+		
+	}
+
+	implement vector:<ELEMENT_T> for MutIndexOp:<ELEMENT_T, uptr> where <ELEMENT_T>
+	{
+		
+		function op_index_mut ( base: & Self, index: uptr ): mut & ELEMENT_T
+		{
+			
+			return Self.data [ index ];
+			
+		}
+		
+	}
+
+	implement vector:<ELEMENT_T> for MutList:<ELEMENT_T> where <ELEMENT_T> {}
+	
+}

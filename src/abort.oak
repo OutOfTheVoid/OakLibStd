@@ -1,0 +1,31 @@
+import "cffi.oak";
+import "io.oak";
+
+#[ no_return ]
+#[ calling_convention ( cdecl ) ]
+extern function exit ( code: i32 ): c_void;
+
+namespace std
+{
+	
+	#[ no_return ]
+	function abort ( code: u32 ): void
+	{
+		
+		// TODO: Implement
+		
+		loop {}
+		
+	}
+	
+	#[ no_return ]
+	function abort_error_string ( message: str, code: u32 ): void
+	{
+		
+		// TODO: Implement printing error
+		
+		abort ( code );
+		
+	}
+	
+}

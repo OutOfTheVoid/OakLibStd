@@ -1,0 +1,73 @@
+import "stdlib.oak";
+
+namespace std
+{
+
+	trait ForwardIterator <ELEMENT_T>
+	{
+		
+		function next ( mut & self ): Option:<ELEMENT_T>
+		
+	}
+
+	trait IntoForwardIter <OUT_ITER_T: ForwardIterator>
+	{
+		
+		function into_forward_iter ( self ): OUT_ITER_T
+		
+	}
+
+	implement Range:<T> for IntoForwardIter:<T> where <T: CompareGTorEqOp + CompareLTOp + Copy + IncrementOp>
+	{
+		
+		function into_forward_iter ( self ): RangeIter:<T>
+		{
+			
+			return RangeIter:<T>: { range: self, current: Option:<T> :: Some ( self.low ) };
+			
+		}
+		
+	}
+	
+	struct RangeIter <ELEMENT_T>
+	{
+		
+		range: Range:<ELEMENT_T>,
+		current: Option: <ELEMENT_T>
+		
+	}
+	
+	implement RangeIter:<ELEMENT_T> for ForwardIterator:<ELEMENT_T> where <T: CompareGTorEqOp + CompareLTOp + Copy + IncrementOp>
+	{
+		
+		function next ( mut & self ): Option:<ELEMENT_T>
+		{
+			
+			match ( self.current )
+			{
+				
+				Option:<ELEMENT_T> :: Some ( value ):
+				{
+					
+					bind next_val:ELEMENT_T = value;
+					value ++;
+					
+					if ( value < self.range.high )
+						self.current = Option:<ELEMENT_T> :: Some ( value );
+					else
+						self.current = Option:<ELEMENT_T> :: None;
+					
+					return self.current;
+					
+				}
+				
+				Option:<ELEMENT_T> :: None:
+					return Option:<ELEMENT_T> :: None;
+				
+			}
+			
+		}
+		
+	}
+
+}

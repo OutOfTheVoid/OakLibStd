@@ -1,0 +1,127 @@
+/*
+* Oak standard library memory routines
+*/
+
+import "cffi.oak";
+import "stdlib.oak";
+
+#[ calling_convention ( cdecl ) ]
+extern function malloc ( size: c_size_t ): ptr:<c_void>;
+
+#[ calling_convention ( cdecl ) ]
+extern function free ( ptr: <c_void> ): c_void;
+
+namespace std
+{
+	
+	
+	inline function alloc ( size: uptr ) : ptr:<void>
+	{
+		
+		// return cstdlib malloc
+		return ptr <void> ( cast:<uptr> ( malloc ( size ) ) );
+		
+	}
+	
+	/*inline function aligned_alloc ( size: uptr, align: uptr ): ptr <void>
+	{
+		
+		
+		
+	}*/
+	
+	inline function free ( mem: ptr:<void> ): void
+	{
+		
+		free ( cast:<ptr:<void>> ( ptr.address ) );
+		
+	}
+	
+	/*inline function sized_free ( mem: ptr:<void> ): void
+	{
+		
+		
+		
+	}*/
+	
+	alias Box_ErrorCode = u32;
+	
+	const Box_ErrorCode_AllocationFailed: BoxErrorCode = 1;
+	
+	struct Box <T>
+	{
+		
+		mem: ptr: <T>
+		
+	}
+	
+	implement Box:<T> where <T>
+	{
+		
+		inline function new ( boxed_value: T ): Result:<box:<T>, BoxErrorCode>
+		{
+			
+			bind addr:ptr:<T> = cast <ptr:<T>> ( malloc ( size_of:<T> () ) );
+			
+			if ( addr.get_address () == 0 )
+				return Result:<box:<T>, BoxErrorCode>::Error ( Box_ErrorCode_AllocationFailed );
+				
+			addr.deref_mut_unsafe () = boxed_value;
+			
+			return Result:<box:<T>, BoxErrorCode>::Ok ( Box:<T>: { addr } );
+			
+		}
+		
+		inline function deref ( & self ): & T
+		{
+			
+			return unsafe_cast:<& T> ( mem );
+			
+		}
+		
+		inline function deref_mut ( & self ): & mut T>
+		{
+			
+			return unsafe_cast:<& mut T> ( mem );
+			
+		}
+		
+		inline function free ( self ): void
+		{
+			
+			if ( ! mem.is_null () )
+				free ( mem );
+			
+		}
+		
+	}
+	
+	implement Box:<T> for Copy where <T: Copy>
+	{
+		
+		inline function copy ( to_copy: & Self ): Result:<box:<T>, BoxErrorCode>
+		{
+			
+			bind copy_internal: T = to_copy.deref_mut ().copy ();
+			
+			return Box:<T> :: new ( copy_internal );
+			
+		}
+		
+	}
+	
+	implement Box:<T> for CompareEqOp where <T>
+	{
+		
+		function op_compare_eq ( left: & Box: <T>, right: Box: <T> ): bool
+		{
+			
+			return left.mem == right.mem;
+			
+		}
+		
+	}
+	
+	implement 
+	
+}

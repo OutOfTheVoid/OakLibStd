@@ -1,0 +1,115 @@
+/*
+* Oak standard library base definitions
+*/
+
+import "errors.oak";
+import "abort.oak";
+
+namespace std
+{
+	
+	const stdlib_version_major: u64 = 0;
+	const stdlib_version_minor: u64 = 0;
+	const stdlib_version_revision: u64 = 0;
+	
+	const stdlib_version_string: & str = "0.0.0";
+	
+	enum Option <TYPE>
+	{
+		
+		Some: TYPE,
+		None: void
+		
+	}
+	
+	implement Option:<TYPE> where <TYPE>
+	{
+		
+		function unwrap ( self ): TYPE
+		{
+			
+			match ( self )
+			{
+				
+				Self :: Some ( x ):
+					return x;
+					
+				Self :: None:
+					abort_error_string ( "unwrapped none option", ERROR_OPTION_UNWRAP_NONE );
+				
+			}
+			
+		}
+		
+		function is_some ( & self ): bool
+		{
+			
+			match ( self )
+			{
+				
+				Self :: Some:
+					return true;
+					
+				Self :: None:
+					return false;
+				
+			}
+			
+		}
+		
+	}
+	
+	implement Option:<TYPE> for Cast:<bool> where <TYPE>
+	{
+		
+		function cast ( opt: & Self ): bool
+			return opt.is_some ();
+		
+	}
+	
+	enum Result <RESULT_T, ERROR_T>
+	{
+		
+		Ok: RESULT_T,
+		Error: ERROR_T
+		
+	}
+	
+	implement Result:<RESULT_T, ERROR_T> where <RESULT_T, ERROR_T: Cast:<String>>
+	{
+		
+		function is_ok ( & self ): bool
+		{
+			
+			match ( & self )
+			{
+				
+				Self :: Ok:
+					return true;
+					
+				Self :: Error:
+					return false;
+				
+			}
+			
+		}
+		
+		function unwrap ( self ): RESULT_T
+		{
+			
+			match ( self )
+			{
+				
+				Self :: Ok ( x ):
+					return x;
+					
+				Self :: Error ( e ):
+					abort_error_string ( "unwrapped error result: " + e.cast:<String> (), ERROR_OPTION_UNWRAP_NONE );
+				
+			}
+			
+		}
+		
+	}
+	
+}

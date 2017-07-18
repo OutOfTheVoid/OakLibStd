@@ -1,0 +1,12 @@
+import "cffi.oak"
+
+namespace std
+{
+	
+	alias file_handle = ptr:<c_void>;
+	
+	const STDIN: file_handle = 0iptr;
+	const STDOUT: file_handle = 1iptr;
+	const STDERR: file_handle = 2iptr;
+	
+}

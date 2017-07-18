@@ -1,0 +1,26 @@
+/*
+* Oak standard library C foreign function interface
+*/
+
+// Note: these are just temporary at the moment, and not necessarily correct for all platforms.
+
+alias c_void = void;
+
+alias c_bool = bool;
+
+alias c_char = i8;
+alias c_unsigned_char = u8;
+alias c_short = i16;
+alias c_unsigned_short = u16;
+alias c_int = i32;
+alias c_unsigned_int = i32;
+alias c_long = i32;
+alias c_unsigned_long = u32;
+alias c_long_long = i64;
+alias c_unsigned_long_long = u64;
+
+alias c_float = f32;
+alias c_double = f64;
+
+alias c_enum = i32;
+
